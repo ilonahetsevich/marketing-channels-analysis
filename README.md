@@ -222,8 +222,8 @@ period or that the price of the paid subscription is perceived as too high.</p>
 <p>Notably, there are no unique visitors from <b>Channel 9</b>, despite associated costs, which
 could indicate the channel's ineffectiveness, tracking issues, or that it is simply an offline
 channel not attributable to online traffic.
-
 </p>
+<br />
 
 <p align="center">
 <img src="/images/traffic_and_conversions_by_channel.png" />
@@ -233,6 +233,10 @@ channel not attributable to online traffic.
 <i> <b> Disclaimer: </b> When analyzed by channels, the number of unique visits is 10.3% higher than the overall count, indicating that users are making multiple visits across different channels. It is advisable to implement multi-touch attribution modelling rather than attributing all the credit to either the first or last channel by default.</i>
 </blockquote>
 <br />
+
+---
+
+
 <p><b>Another observation</b> I've made during my analysis was an <b>unusual traffic trend</b>. When I extracted the day of the week for each date in October, I noticed that, unlike most businesses that typically scale back marketing activities over the weekend, this company’s advertising team reduced efforts on Fridays and Saturdays. This led to a significant drop in traffic, followed by a sharp increase on Sundays. </p>
 <p>  This pattern is unconventional, and unless the team is specifically targeting Arab countries (which further analysis does not support), it may be worth adjusting the strategy to align with more conventional marketing schedules for potentially better results.
 </p>
@@ -251,3 +255,123 @@ ORDER BY visit_day ASC
 <p align="center">
 <img src="/images/daily_visits.png" />
 <br />
+
+---
+
+<br />
+<h3>Question 2. How did different acquisition sources perform in attracting visitors in October 2021?</h3>
+<p>After exploring the visits data, the next step was to evaluate the performance of the acquisition sources in terms of revenue, cost, and ROI.</p> 
+<p>Given that visitors often come to the website multiple times and through various channels, I needed to determine how to attribute the revenue. Since the project focused on bottom-of-funnel activities, I chose to use a last-touch attribution model, giving credit to the last channel a visitor used before purchasing a paid subscription.</p>
+
+<p>To achieve this, I created a script consisting of multiple Common Table Expressions (CTEs):</p>
+
+<ul>
+  <li><strong>Filtering Paid Visitors:</strong> First, I filtered all visitors who had paid subscriptions, along with their first contract value.</li>
+  <li><strong>Attribution Logic:</strong> Since I used the last-touch attribution model, I filtered visits that occurred only before the subscription date by comparing the EVENT_DATETIME with the SUBSCRIPTION_CREATED_DATE. During this step, I noticed some visitors had no recorded visits before their subscription date in October 2021, only after it. This made it impossible to attribute revenue to the last acquisition channel before conversion, which could suggest missing visits in prior months or data tracking issues.</li>
+  <li><strong>Identifying the Last Channel:</strong> The next step was to filter for the last channel before conversion, which I accomplished with two CTEs:
+    <ul>
+      <li>The first CTE assigned a row number to each visit for each user in descending order, using a window function so the visit just before the conversion would have a row number of 1.</li>
+      <li>The second CTE filtered for channels with row number 1, indicating the last visit before conversion.</li>
+    </ul>
+  </li>
+  <li><strong>Calculating Costs and Revenue:</strong> The next two CTEs calculated the costs of each channel and the revenue. The revenue was calculated as the first contract value multiplied by 8, as the task description indicated that the lifespan of a project was equal to 8 months.</li>
+  <li><strong>ROI and Additional Metrics:</strong> In the outer query, I calculated ROI and additional metrics such as revenue per customer and customer acquisition costs. These metrics ensure that your acquisition costs are justified by the revenue generated from new customers. For one channel with zero costs, I added a case statement to assign an extremely high ROI value to indicate infinite ROI.</li>
+</ul>
+
+<p>The result was a table with 8 rows and 7 columns. I also noticed that I didn’t have data for 3 out of 11 channels from the costs CSV file.</p>
+
+<p>Finally, the output of the query was exported to Excel for follow-up analysis and visualizations.</p>
+
+```sql
+With paid_customers AS ( --CTE to filter all the visitors with paid subscription along with their first_contract_value
+   SELECT
+       Distinct hv.VISITOR_ID,
+       FIRST_CONTRACT_VALUE
+   FROM `portfolio.project.tidio.homepage_visits` as hv
+   JOIN `portfolio.project.tidio.projects_created` as pc
+   ON hv.VISITOR_ID=pc.VISITOR_ID
+   WHERE SUBSCRIPTION_CREATED_DATE IS NOT NULL
+   GROUP BY hv.VISITOR_ID,FIRST_CONTRACT_VALUE
+),
+
+
+ filtered_visits AS ( --CTE to filter visits which happened before "conversion". I've selected the last attribution method to calculate ROI, thus I was interesed only in visits prior to "conversion".
+     SELECT
+         Distinct hv.VISITOR_ID,
+         ACQUISITION_CHANNEL,
+         CAST(EVENT_DATETIME AS DATE) as EVENT_DATETIME,
+         PROJECT_REGISTRATION_DATETIME,
+         CAST(SUBSCRIPTION_CREATED_DATE AS DATE) as SUBSCRIPTION_CREATED_DATE
+     FROM `portfolio.project.homepage_visits` as hv
+     JOIN `portfolio.project.projects_created` as pc
+     ON hv.VISITOR_ID=pc.VISITOR_ID
+     --WHERE EVENT_DATETIME <= PROJECT_REGISTRATION_DATETIME --gives you 214 out of 276 visitors only
+     WHERE CAST(EVENT_DATETIME AS DATE)  <= CAST(SUBSCRIPTION_CREATED_DATE AS DATE) --gives you 269 out of 276 visitors
+     GROUP BY VISITOR_ID, ACQUISITION_CHANNEL,EVENT_DATETIME, PROJECT_REGISTRATION_DATETIME,SUBSCRIPTION_CREATED_DATE
+ ),
+
+
+ last_channel AS ( --CTE to assign a unique row number to each visit for each visitor oredered by the date of a visit in DESC order, so the visit happened right before conversion will have a row number = 1
+     SELECT
+         fv.VISITOR_ID,
+         ACQUISITION_CHANNEL,
+         EVENT_DATETIME,
+         ROW_NUMBER() OVER (PARTITION BY fv.VISITOR_ID ORDER BY EVENT_DATETIME DESC) AS row_num
+     FROM filtered_visits as fv
+     JOIN paid_customers as pc
+     ON fv.VISITOR_ID=pc.VISITOR_ID
+ ),
+
+
+ filtered_last_channel AS ( --CTE to filter only the last channel before "conversion"
+     SELECT
+         VISITOR_ID,
+         ACQUISITION_CHANNEL,
+         EVENT_DATETIME
+     FROM
+         last_channel
+     WHERE
+         row_num = 1
+ ),
+
+
+ channel_costs AS ( -- CTE to bring the costs of running each of the channels
+     SELECT
+         DISTINCT hv.ACQUISITION_CHANNEL,
+         COST AS total_cost
+     FROM `portfolio.project.homepage_visits` as hv
+     JOIN `portfolio.project.costs` as co
+     ON hv.ACQUISITION_CHANNEL=co.ACQUISITION_CHANNEL
+     GROUP BY ACQUISITION_CHANNEL,COST
+ ),
+
+
+ channel_revenue AS ( --CTE to calulate the total revenue coming from all the unique paying customers and attribute it to the last channel before "conversion"
+     SELECT
+         ACQUISITION_CHANNEL,
+         COUNT(DISTINCT pc.VISITOR_ID) AS unique_paying_customers,
+         ROUND(SUM(pc.FIRST_CONTRACT_VALUE * 8),2) AS total_revenue
+     FROM paid_customers as pc
+     JOIN filtered_last_channel as flc
+     ON pc.VISITOR_ID=flc.VISITOR_ID
+     GROUP BY ACQUISITION_CHANNEL
+ )
+ SELECT --final step - calculting ROI for each of the channels
+   cr.ACQUISITION_CHANNEL,
+   cr.unique_paying_customers,
+   cr.total_revenue,
+   cc.total_cost,
+   CASE
+       WHEN cc.total_cost = 0 THEN 10000 -- a high value to indicate infinite ROI for the channel_11 with zero cost
+       ELSE ROUND((cr.total_revenue - cc.total_cost) / cc.total_cost * 100, 2)
+   END AS roi,
+   ROUND(cr.total_revenue/cr.unique_paying_customers,2) as revenue_per_customer,
+   ROUND(cc.total_cost/ cr.unique_paying_customers, 2) as customer_acquisition_cost
+   FROM channel_revenue cr
+   JOIN channel_costs cc
+   ON cr.ACQUISITION_CHANNEL = cc.ACQUISITION_CHANNEL
+   ORDER BY roi DESC;
+
+
+
+```
