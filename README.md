@@ -58,3 +58,24 @@
 
 
 <h2>Project walk-through:</h2>
+<h3>Question 1. How Does Traffic and Conversion Vary by Channel?</h3>
+<p><b>The initial step</b> was to conduct an exploratory analysis of the data. I examined each of the .csv files to understand the columns they contained and how each of the tables is connected to each other. In other words, I needed to know which was the primary key, which was the foreign key, and how tables were connected via these keys so I could build a final logic.
+</p>
+<div align="center">
+<img src="/images/eda_homepage_visits_table_10_rows.png"/>
+<p><i><sub>First 10 rows of the homepage_visits dataset</sub></i></p>
+</div>
+
+<br />
+<div align="center">
+<img src="/images/eda_projects_created_table_10_rows.png"  />
+<p><i><sub>First 10 rows of the projects_created dataset</sub></i></p>
+</div>
+
+<br />
+<div align="center">
+<img src="/images/eda_costs_table_all_rows.png" />
+<p><i><sub>All the rows of the costs dataset</sub></i></p>
+</div>
+
+<br />
