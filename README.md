@@ -49,11 +49,11 @@
 
 ## Table of Contents
 
-1. [How Does Traffic and Conversion Vary by Channel?](#-1-listening-trends-over-time--11-yearly-spotify-listening-trends)
-2. [How did different acquisition sources perform in attracting visitors in October 2021?](#-2-artists-songs-and-genres--21-skipping-behavior-211-device-specific-skipping-patterns-)
-3. [Recommendations](#-3-device-analysis-and-lifestyle-changes--31-device-usage-breakdown)
-4. [Executive Summary](#-3-device-analysis-and-lifestyle-changes--31-device-usage-breakdown)
-5. [Appendix](#conclusion )
+1. [How Does Traffic and Conversion Vary by Channel?](#question-1-how-does-traffic-and-conversion-vary-by-channel)
+2. [How did different acquisition sources perform in attracting visitors in October 2021?](#question-2-how-did-different-acquisition-sources-perform-in-attracting-visitors-in-october-2021)
+3. [Recommendations](#recommendations)
+4. [Executive Summary](#executive-summary)
+5. [Appendix](#appendix)
   
 
 
