@@ -266,15 +266,15 @@ ORDER BY visit_day ASC
 <p>To achieve this, I created a script consisting of multiple Common Table Expressions (CTEs):</p>
 
 <ul>
-  <li><strong>Filtering Paid Visitors:</strong> First, I filtered all visitors who had paid subscriptions, along with their first contract value.</li>
-  <li><strong>Attribution Logic:</strong> Since I used the last-touch attribution model, I filtered visits that occurred only before the subscription date by comparing the EVENT_DATETIME with the SUBSCRIPTION_CREATED_DATE. During this step, I noticed some visitors had no recorded visits before their subscription date in October 2021, only after it. This made it impossible to attribute revenue to the last acquisition channel before conversion, which could suggest missing visits in prior months or data tracking issues.</li>
+  <li><strong>Filtering Paid Visitors:</strong> First, I filtered all visitors who had paid subscriptions, along with their first contract value.</li><br />
+  <li><strong>Attribution Logic:</strong> Since I used the last-touch attribution model, I filtered visits that occurred only before the subscription date by comparing the EVENT_DATETIME with the SUBSCRIPTION_CREATED_DATE. <br /> During this step, I noticed some visitors had no recorded visits before their subscription date in October 2021, only after it. This made it impossible to attribute revenue to the last acquisition channel before conversion, which could suggest missing visits in prior months or data tracking issues.</li><br />
   <li><strong>Identifying the Last Channel:</strong> The next step was to filter for the last channel before conversion, which I accomplished with two CTEs:
     <ul>
       <li>The first CTE assigned a row number to each visit for each user in descending order, using a window function so the visit just before the conversion would have a row number of 1.</li>
       <li>The second CTE filtered for channels with row number 1, indicating the last visit before conversion.</li>
     </ul>
-  </li>
-  <li><strong>Calculating Costs and Revenue:</strong> The next two CTEs calculated the costs of each channel and the revenue. The revenue was calculated as the first contract value multiplied by 8, as the task description indicated that the lifespan of a project was equal to 8 months.</li>
+  </li> <br />
+  <li><strong>Calculating Costs and Revenue:</strong> The next two CTEs calculated the costs of each channel and the revenue. The revenue was calculated as the first contract value multiplied by 8, as the task description indicated that the lifespan of a project was equal to 8 months.</li><br />
   <li><strong>ROI and Additional Metrics:</strong> In the outer query, I calculated ROI and additional metrics such as revenue per customer and customer acquisition costs. These metrics ensure that your acquisition costs are justified by the revenue generated from new customers. For one channel with zero costs, I added a case statement to assign an extremely high ROI value to indicate infinite ROI.</li>
 </ul>
 
@@ -305,8 +305,7 @@ With paid_customers AS ( --CTE to filter all the visitors with paid subscription
      FROM `portfolio.project.homepage_visits` as hv
      JOIN `portfolio.project.projects_created` as pc
      ON hv.VISITOR_ID=pc.VISITOR_ID
-     --WHERE EVENT_DATETIME <= PROJECT_REGISTRATION_DATETIME --gives you 214 out of 276 visitors only
-     WHERE CAST(EVENT_DATETIME AS DATE)  <= CAST(SUBSCRIPTION_CREATED_DATE AS DATE) --gives you 269 out of 276 visitors
+     WHERE CAST(EVENT_DATETIME AS DATE)  <= CAST(SUBSCRIPTION_CREATED_DATE AS DATE) 
      GROUP BY VISITOR_ID, ACQUISITION_CHANNEL,EVENT_DATETIME, PROJECT_REGISTRATION_DATETIME,SUBSCRIPTION_CREATED_DATE
  ),
 
