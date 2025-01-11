@@ -60,7 +60,7 @@
 <h2>Project walk-through:</h2>
 <h3>Question 1. How Does Traffic and Conversion Vary by Channel?</h3>
 
-> <p><b>The initial step</b> was to conduct an exploratory analysis of the data. I examined each of the .csv files to understand the columns they contained and how each of the tables is connected to each other. In other words, I needed to know which was the primary key, which was the foreign key, and how tables were connected via these keys so I could build a final logic.
+<p><b>The initial step</b> was to conduct an exploratory analysis of the data. I examined each of the .csv files to understand the columns they contained and how each of the tables is connected to each other. In other words, I needed to know which was the primary key, which was the foreign key, and how tables were connected via these keys so I could build a final logic.
 </p>
 <br />
 <div align="center">
@@ -82,7 +82,7 @@
 
 <br />
 
-> <p>I started by analyzing the visits data to uncover key metrics: the total number of visits, unique visits, and the number of visits that led to registrations and paid subscriptions. I also calculated the conversion rates between each step to better understand the customer journey.</p>
+<p>I started by analyzing the visits data to uncover key metrics: the total number of visits, unique visits, and the number of visits that led to registrations and paid subscriptions. I also calculated the conversion rates between each step to better understand the customer journey.</p>
 
 ```sql
 -- Combined script to retrieve visits statistics and conversions
@@ -119,3 +119,36 @@ FROM
 
 ```
 <br />
+
+
+
+
+<h3>💡 Learnings:</h3>
+<h4>Key Insight: </h4>
+<p>While the company’s home page is attracting a good number of visitors and repeat
+visits, there is room for improvement in converting these visitors into registered users and paid subscribers.</p>
+<h4>Additional Insights: </h4>
+<p>A significant number of repeat visits suggest good engagement and retention. However, a notable drop-off occurs from unique visitors to registrations, with only 4.6%
+converting. An even larger drop-off is observed from registrations to subscriptions, as only 4% of
+those who register go on to subscribe.
+<br />
+Identifying and addressing the reasons for these drop-offs can significantly improve
+conversion rates. This may involve optimizing the registration and subscription processes,
+offering more value or incentives to upgrade to paid plan, ensuring consistency in the
+messaging and visuals between ads and the homepage, or enhancing the overall user
+experience.
+</p>
+
+<p align="center">
+<img src="/images/funnel.png" />
+<br />
+
+<blockquote style="background-color: #f0f0f0; padding: 15px; border-left: 5px solid #ccc; font-style: italic;">
+<i> <b> Disclaimer: </b> While analysing the data, it was noticed that some visitors have no recorded visits before their subscription date in October 2021, only after, making it impossible to attribute revenue to the last
+acquisition channel before conversion. This might suggest possible visits in prior months or data tracking issues. Examples are available in the Appendix.</i>
+</blockquote>
+
+---
+
+
+
