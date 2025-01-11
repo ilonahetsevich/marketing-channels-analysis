@@ -232,3 +232,22 @@ channel not attributable to online traffic.
 <blockquote style="background-color: #f0f0f0; padding: 15px; border-left: 5px solid #ccc; font-style: italic;">
 <i> <b> Disclaimer: </b> When analyzed by channels, the number of unique visits is 10.3% higher than the overall count, indicating that users are making multiple visits across different channels. It is advisable to implement multi-touch attribution modelling rather than attributing all the credit to either the first or last channel by default.</i>
 </blockquote>
+<br />
+<p><b>Another observation</b> I've made during my analysis was an <b>unusual traffic trend</b>. When I extracted the day of the week for each date in October, I noticed that, unlike most businesses that typically scale back marketing activities over the weekend, this company’s advertising team reduced efforts on Fridays and Saturdays. This led to a significant drop in traffic, followed by a sharp increase on Sundays. </p>
+<p>  This pattern is unconventional, and unless the team is specifically targeting Arab countries (which further analysis does not support), it may be worth adjusting the strategy to align with more conventional marketing schedules for potentially better results.
+</p>
+
+```sql
+select
+ EXTRACT (day FROM EVENT_DATETIME) as visit_day,
+ FORMAT_TIMESTAMP('%A', event_datetime) AS day_of_week,
+ COUNT(VISITOR_ID) as total_visitors,
+ COUNT(DISTINCT VISITOR_ID) as unique_visitors
+FROM `portfolio.project.homepage_visits`
+GROUP BY visit_day,day_of_week
+ORDER BY visit_day ASC
+```
+<br />
+<p align="center">
+<img src="/images/daily_visits.png" />
+<br />
