@@ -701,3 +701,39 @@ SELECT
 
 </table>
 
+
+---
+
+<h2>Executive Summary</h2>
+
+<p>While the homepage attracts a substantial number of visitors and repeat visits, there is potential to improve the conversion of these visitors into registered users and paid subscribers.</p>
+
+<p>Most channels exhibit a low conversion rate to paid subscriptions, indicating a need to refine the strategy for encouraging upgrades.</p>
+
+<p>To optimize overall performance, increase investment in high-performing Channels 1, 3, and 8.</p>
+
+<p>Lower the customer acquisition cost and increase revenue per customer to address the inefficiency in Channel 2.</p>
+
+<p>Explore ways to lower the customer acquisition cost and increase customer base in channels 4 and 6.</p>
+
+<p>Expand the customer base for Channel 5 to improve overall efficiency, as it currently has the highest revenue per customer but only 2 unique paying customers. The high CAC indicates the channel attracts premium customers, but broader reach is needed.</p>
+
+<p>Continue leveraging the zero-cost advantage for Channel 11, while diversifying targeting across various markets, regions, and industries to prepare for potential future costs.</p>
+
+<p>Address the cost-revenue imbalance in Channels 7, 9, and 10.</p>
+
+
+---
+
+
+<h2>Appendix</h2>
+
+<div align="center">
+<img src="/images/appendix_examples_no_sessions.png" />
+<p><i><sub>Examples of Visitors with no sessions prior to Subscription date</sub></i></p>
+</div>
+
+<div align="center">
+<img src="/images/appendix_revenue_metrics_by_channel.png" />
+<p><i><sub>Revenue Metrics by Channel</sub></i></p>
+</div>
