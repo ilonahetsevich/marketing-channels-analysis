@@ -121,17 +121,18 @@ FROM
 <br />
 
 
+---
+
 
 
 <h3>💡 Learnings:</h3>
-<h4>Key Insight: </h4>
-<p>While the company’s home page is attracting a good number of visitors and repeat
+<p><b>Key Insight:</b> While the company’s home page is attracting a good number of visitors and repeat
 visits, there is room for improvement in converting these visitors into registered users and paid subscribers.</p>
 <h4>Additional Insights: </h4>
 <p>A significant number of repeat visits suggest good engagement and retention. However, a notable drop-off occurs from unique visitors to registrations, with only 4.6%
 converting. An even larger drop-off is observed from registrations to subscriptions, as only 4% of
-those who register go on to subscribe.
-<br />
+those who register go on to subscribe.</p>
+<p>
 Identifying and addressing the reasons for these drop-offs can significantly improve
 conversion rates. This may involve optimizing the registration and subscription processes,
 offering more value or incentives to upgrade to paid plan, ensuring consistency in the
@@ -148,7 +149,86 @@ experience.
 acquisition channel before conversion. This might suggest possible visits in prior months or data tracking issues. Examples are available in the Appendix.</i>
 </blockquote>
 
+<br />
+
+---
+
+<p><b>The next step</b> was to analyze the performance of each acquisition channel. This helped me identify which channels drive the most traffic and which ones excel or underperform in terms of converting users. 
+  <br />
+I simply tweaked the original script by adding the channel metric to gain these insights.
+
+</p>
+
+```sql
+WITH visit_stats AS (
+   -- Retrieve visit statistics by channel
+   SELECT
+       ACQUISITION_CHANNEL,
+       COUNT(VISITOR_ID) AS total_visitors,
+       COUNT(DISTINCT VISITOR_ID) AS unique_visitors
+   FROM `portfolio.project.homepage_visits`
+   GROUP BY ACQUISITION_CHANNEL
+),
+registration_stats AS (
+   -- Retrieve data about visitors with registrations and paying customers by channel
+   SELECT
+       v.ACQUISITION_CHANNEL,
+       COUNT(DISTINCT CASE WHEN p.PROJECT_REGISTRATION_DATETIME IS NOT NULL THEN v.VISITOR_ID END) AS customers_with_registrations,
+       COUNT(DISTINCT CASE WHEN p.SUBSCRIPTION_CREATED_DATE IS NOT NULL THEN v.VISITOR_ID END) AS paying_customers
+   FROM
+       `portfolio.project.homepage_visits` v
+   JOIN
+       `portfolio.project.projects_created` p
+       ON v.VISITOR_ID = p.VISITOR_ID
+   GROUP BY v.ACQUISITION_CHANNEL
+)
+SELECT
+   vs.ACQUISITION_CHANNEL,
+   vs.total_visitors,
+   vs.unique_visitors,
+   rs.customers_with_registrations,
+   rs.paying_customers,
+   -- Calculate conversion rates by channel
+   ROUND(100 * rs.customers_with_registrations / vs.unique_visitors, 1) AS conversion_to_registration,
+   ROUND(100 * rs.paying_customers / rs.customers_with_registrations, 1) AS conversion_to_payment
+FROM
+   visit_stats AS vs
+JOIN
+   registration_stats AS rs
+   ON vs.ACQUISITION_CHANNEL = rs.ACQUISITION_CHANNEL
+
+
+
+```
+<br />
+
 ---
 
 
 
+<h3>💡 Learnings:</h3>
+<p><b>Key Insight:</b> Almost all channels experience a low conversion rate to paid subscription, indicating that the strategy around encouraging users to upgrade to paid subscriptions may need to be refined.</p>
+<h4>Additional Insights: </h4>
+<p>Although <b>Channels 1 and 4</b> drive the most traffic to the homepage, they have the lowest
+conversion rates to registrations. This may indicate issues such as overly broad targeting,
+audience and/or message mismatch, or insufficiently compelling incentives to drive
+registrations.</p>
+<p>In contrast, <b>Channels 3, 5, 6, and 10</b> have the highest conversion rates to registrations,
+with Channel 3 also excelling in paid subscriptions.
+Analyzing Channel 3's success could provide valuable insights for other channels.</p>
+<p><b>Channels 7 and 10 </b>face significant issues with paid subscriptions despite very high CR to
+registrations, suggesting that users may not be seeing enough value during the trial
+period or that the price of the paid subscription is perceived as too high.</p>
+<p>Notably, there are no unique visitors from <b>Channel 9</b>, despite associated costs, which
+could indicate the channel's ineffectiveness, tracking issues, or that it is simply an offline
+channel not attributable to online traffic.
+
+</p>
+
+<p align="center">
+<img src="/images/traffic_and_conversions_by_channel.png" />
+<br />
+
+<blockquote style="background-color: #f0f0f0; padding: 15px; border-left: 5px solid #ccc; font-style: italic;">
+<i> <b> Disclaimer: </b> When analyzed by channels, the number of unique visits is 10.3% higher than the overall count, indicating that users are making multiple visits across different channels. It is advisable to implement multi-touch attribution modelling rather than attributing all the credit to either the first or last channel by default.</i>
+</blockquote>
