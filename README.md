@@ -567,3 +567,137 @@ SELECT
 ```
 
 ---
+
+<h2>Recommendations</h2>
+
+<table border="1" cellpadding="10" cellspacing="0">
+    <thead>
+        <tr>
+            <th><strong>Channel</strong></th>
+            <th><strong>Recommendations</strong></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Channel 1</strong></td>
+            <td>
+                <p><strong>Overall:</strong> Continue to invest in this channel. Optimize Conversion Rate to registrations for even better results.</p>
+                <p><strong>Platform:</strong> Focus on Direct, which contributes significantly to the revenue. Explore ways to boost revenue from Shopify, as it has potential but currently contributes less.</p>
+                <p><strong>Geo:</strong> Prioritize marketing efforts in the USA and UK, as they are the top revenue-generating countries.</p>
+                <p><strong>Industry:</strong> Strengthen marketing efforts in Online Store and Services.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Channel 2</strong></td>
+            <td>
+                <p><strong>Overall:</strong> Reevaluate the strategy. Focus on reducing the high Customer Acquisition Cost and improving the value proposition to attract higher-paying customers.</p>
+                <p><strong>Platform:</strong> WordPress and Direct contribute significantly to revenue. Enhance targeting strategies for these sources.</p>
+                <p><strong>Geo:</strong> Identify and target alternative markets where the CAC might be lower but still have potential for high revenue. For example, consider focusing on emerging markets or regions with lower competition.</p>
+                <p><strong>Industry:</strong> Explore opportunities to attract more customers in the Real Estate, Agency, and Blog industries.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Channel 3</strong></td>
+            <td>
+                <p><strong>Overall:</strong> Continue to invest in this channel. Replicate the channel's effective strategy to drive high conversion rates for registrations and paid subscriptions across other channels.</p>
+                <p><strong>Platform:</strong> Consider targeting the Direct channel, as it has shown good performance in other channels.</p>
+                <p><strong>Geo:</strong> Prioritize marketing efforts in the USA, UK, Canada as they are the top revenue-generating countries.</p>
+                <p><strong>Industry:</strong> Strengthen marketing efforts in Online Store and Services.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Channel 4</strong></td>
+            <td>
+                <p><strong>Overall:</strong> Explore ways to lower the customer acquisition cost and increase customer base. Enhance the conversion rate to registrations by utilizing retargeting ads to re-engage visitors who did not initially convert.</p>
+                <p><strong>Platform:</strong> Shopify is a significant contributor. Enhance marketing efforts and customer experience on this platform. Explore ways to boost revenue from WordPress as it has potential but currently contributes less.</p>
+                <p><strong>Geo:</strong> Reevaluate the targeting strategy. Consider broadening the geographic scope and prioritizing countries with lower customer acquisition costs (CAC).</p>
+                <p><strong>Industry:</strong> Consider targeting Real Estate and Beauty & Wellness industries to attract more unique paying customers.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Channel 5</strong></td>
+            <td>
+                <p><strong>Overall:</strong> Focus on expanding the customer base while managing acquisition costs.</p>
+                <p><strong>Platform:</strong> Consider targeting Shopify and WordPress as they have shown good performance in other channels.</p>
+                <p><strong>Geo:</strong> Consider expanding geographic reach by prioritizing countries with lower customer acquisition costs (CAC). Use Channel 8 as a model for effectively targeting a wider range of countries.</p>
+                <p><strong>Industry:</strong> Focus on the Online Store industry, as it has demonstrated strong performance in other channels.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Channel 6</strong></td>
+            <td>
+                <p><strong>Overall:</strong> Investigate methods to reduce customer acquisition costs and increase the number of paying customers.</p>
+                <p><strong>Platform:</strong> Explore ways to boost revenue from Shopify and WordPress, as they have potential but currently contribute less.</p>
+                <p><strong>Geo:</strong> Consider broadening geographic reach by focusing on countries with lower customer acquisition costs (CAC).</p>
+                <p><strong>Industry:</strong> Consider targeting the Services industry, as it has demonstrated strong performance in other channels.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Channel 7</strong></td>
+            <td>
+                <p><strong>Overall:</strong> Focus on delivering more value during the trial as Channel 7 has no customers starting paid subscriptions. Offer incentives such as discounts or free trials to encourage conversions.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Channel 8</strong></td>
+            <td>
+                <p><strong>Overall:</strong> Continue investment and optimization to maintain channel’s strong performance.</p>
+                <p><strong>Platform:</strong> Direct is the major revenue contributor. Continue to invest and optimize this source. Look for new opportunities to diversify revenue streams with Shopify and WordPress.</p>
+                <p><strong>Geo:</strong> Maintain your focus on countries with lower customer acquisition costs (CAC), such as Nigeria, Pakistan, and Turkey, as they are currently performing well.</p>
+                <p><strong>Industry:</strong> Continue focusing on the Online Store and Services industries, as they are currently demonstrating strong performance.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Channel 9</strong></td>
+            <td>
+                <p><strong>Overall:</strong> Evaluate the effectiveness of Channel 9, as it incurs costs without generating unique visitors, and address potential tracking issues.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Channel 10</strong></td>
+            <td>
+                <p><strong>Overall:</strong> Channel 10 excels at converting users to registrations but struggles with paid conversions. Implement email marketing and retargeting ads to re-engage visitors who did not initially convert.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Channel 11</strong></td>
+            <td>
+                <p><strong>Overall:</strong> Maintain the current strategy to leverage the zero-cost advantage, while diversifying targeting across different markets, regions, and industries to prepare for potential future costs.</p>
+            </td>
+        </tr>
+    </tbody>
+
+
+
+  <table border="1" cellpadding="10" cellspacing="0">
+    <thead>
+        <tr>
+            <th><strong>Focus Area</strong></th>
+            <th><strong>Recommendations</strong></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Low Conversion</strong></td>
+            <td>
+                <p>Focus on optimizing the registration and subscription processes, offering more value or incentives to upgrade to paid plans.</p>
+                <p>Consider implementing email verification rules to prevent users from registering with fake addresses. This will prevent the wastage of resources on invalid or non-existent email addresses, ensuring that efforts are focused on genuine users.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Multi-touch Attribution</strong></td>
+            <td>
+                <p>Implement multi-touch attribution modelling to accurately credit multiple channels for user visits.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Traffic Optimization</strong></td>
+            <td>
+                <p>Revise the strategy to maintain marketing activities on Fridays and scale back on Sundays for better traffic consistency and improved results.</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</table>
+
