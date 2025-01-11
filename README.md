@@ -59,8 +59,10 @@
 
 <h2>Project walk-through:</h2>
 <h3>Question 1. How Does Traffic and Conversion Vary by Channel?</h3>
-<p><b>The initial step</b> was to conduct an exploratory analysis of the data. I examined each of the .csv files to understand the columns they contained and how each of the tables is connected to each other. In other words, I needed to know which was the primary key, which was the foreign key, and how tables were connected via these keys so I could build a final logic.
+
+> <p><b>The initial step</b> was to conduct an exploratory analysis of the data. I examined each of the .csv files to understand the columns they contained and how each of the tables is connected to each other. In other words, I needed to know which was the primary key, which was the foreign key, and how tables were connected via these keys so I could build a final logic.
 </p>
+<br />
 <div align="center">
 <img src="/images/eda_homepage_visits_table_10_rows.png"/>
 <p><i><sub>First 10 rows of the homepage_visits dataset</sub></i></p>
@@ -78,4 +80,42 @@
 <p><i><sub>All the rows of the costs dataset</sub></i></p>
 </div>
 
+<br />
+
+> <p>I started by analyzing the visits data to uncover key metrics: the total number of visits, unique visits, and the number of visits that led to registrations and paid subscriptions. I also calculated the conversion rates between each step to better understand the customer journey.</p>
+
+```sql
+-- Combined script to retrieve visits statistics and conversions
+WITH visit_stats AS (
+   -- Retrieve visit statistics
+   SELECT
+       COUNT(VISITOR_ID) AS total_visitors,
+       COUNT(DISTINCT VISITOR_ID) AS unique_visitors
+   FROM `portfolio.project.homepage_visits`
+),
+registration_stats AS (
+   -- Retrieve data about visitors with registrations and paying customers
+   SELECT
+       COUNT(DISTINCT CASE WHEN p.PROJECT_REGISTRATION_DATETIME IS NOT NULL THEN v.VISITOR_ID END) AS customers_with_registrations,
+       COUNT(DISTINCT CASE WHEN p.SUBSCRIPTION_CREATED_DATE IS NOT NULL THEN v.VISITOR_ID END) AS paying_customers
+   FROM
+       `portfolio.project.homepage_visits` v
+   JOIN
+       `portfolio.project.projects_created` p
+       ON v.VISITOR_ID = p.VISITOR_ID
+)
+SELECT
+   vs.total_visitors,
+   vs.unique_visitors,
+   rs.customers_with_registrations,
+   rs.paying_customers,
+   --Calculate conversion rates
+   ROUND(100 * rs.customers_with_registrations / vs.unique_visitors,1) AS conversion_to_registration,
+   ROUND(100 * rs.paying_customers / rs.customers_with_registrations,1) AS conversion_to_payment
+FROM
+   visit_stats AS vs,
+   registration_stats AS rs
+
+
+```
 <br />
