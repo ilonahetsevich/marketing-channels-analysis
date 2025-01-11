@@ -345,7 +345,7 @@ With paid_customers AS ( --CTE to filter all the visitors with paid subscription
  ),
 
 
- channel_revenue AS ( --CTE to calulate the total revenue coming from all the unique paying customers and attribute it to the last channel before "conversion"
+ channel_revenue AS ( --CTE to calculate the total revenue coming from all the unique paying customers and attribute it to the last channel before "conversion"
      SELECT
          ACQUISITION_CHANNEL,
          COUNT(DISTINCT pc.VISITOR_ID) AS unique_paying_customers,
