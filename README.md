@@ -375,3 +375,195 @@ With paid_customers AS ( --CTE to filter all the visitors with paid subscription
 
 
 ```
+
+---
+
+<h3>💡 Learnings:</h3>
+<p><b>Key Insight:</b> To optimize overall performance increase investment in high-performing Channels 1, 3, and 8, address the cost-revenue imbalance in Channels 7, 9, and 10, and improve Channel 2's customer acquisition efficiency.</p>
+<h4>Additional Insights: </h4>
+<p><b>Channel 11 </b> currently boasts an exceptionally high ROI due to zero costs; however, this
+may not be sustainable in the long term.
+</p>
+<p><b>Channels 1, 3, and 8 </b> are high performers in both revenue and ROI. To maximize returns,
+consider increasing investment in these channels. Analyze the successful strategies
+employed in Channels 1, 3, and 8, and look for opportunities to replicate these tactics
+across other channels.</p>
+<p><b>Channel 2</b> requires immediate attention due to its negative ROI, which highlights
+inefficiencies in customer acquisition costs. Consider strategies to reduce costs, enhance
+marketing efforts, or reallocate resources to more profitable channels.</p>
+<p><b>Channels 7, 9, and 10</b> have negative ROI because there are costs but no revenue. These
+channels need a thorough review to identify and address the underlying issues.
+</p>
+<br />
+
+
+<p align="center">
+<img src="/images/revenue_roi_cost_by_channel.png" />
+<br />
+
+<blockquote style="background-color: #f0f0f0; padding: 15px; border-left: 5px solid #ccc; font-style: italic;">
+<i> <b> Disclaimer: </b> Revenue is calculated using the last attribution methodology. ROI is determined by subtracting the cost from the revenue and then dividing the result by the cost.</i>
+</blockquote>
+<br />
+
+---
+
+<h3>💡 Learnings:</h3>
+<p><b>Key Insight:</b> Maximize ROI by focusing on efficient channels, improving moderate performers, expanding high-revenue segments, and addressing inefficiencies</p>
+<h4>Additional Insights: </h4>
+<p><b>High Efficiency Channels: </b> channel 1,3 and 8 have a low customer acquisition cost, high
+revenue and a high number of unique paying customers, making them highly efficient
+channels. These channels should be prioritized for continued investment and
+optimization to maintain their strong performance.
+
+</p>
+<p><b> Inefficient Channel: </b>  channel 2 has a high customer acquisition cost and a low revenue
+per customer. This indicates inefficiency, as the high acquisition cost outweighs the
+revenue generated per customer.
+</p>
+<p><b>Channel 2</b> requires immediate attention due to its negative ROI, which highlights
+inefficiencies in customer acquisition costs. Consider strategies to reduce costs, enhance
+marketing efforts, or reallocate resources to more profitable channels.</p>
+<p><b>Moderate Performance:</b>  channels 4 and 6 perform moderately well but has room for
+improvement in reducing acquisition costs or increasing the customer base.
+</p>
+<p><b>High Revenue but Low Customer Base:</b>  channel 5 has the highest revenue per
+customer but only 2 unique paying customers. The high CAC suggests that while the
+channel attracts premium customers, it needs to expand its customer base to improve
+overall efficiency.
+</p>
+<br />
+
+
+<p align="center">
+<img src="/images/renenue_vs_acquisition_costs.png" />
+<br />
+
+<blockquote style="background-color: #f0f0f0; padding: 15px; border-left: 5px solid #ccc; font-style: italic;">
+<i> <b> Disclaimer: </b>  The size of each bubble indicates the number of unique paying customers. Larger bubbles represent a higher number of paying customers.<br />
+CAC = Customer Acquisition Cost<br />
+The actual numbers can be checked in Appendix.
+</i>
+</blockquote>
+<br />
+
+---
+<p><b>To find additional insights</b>, I also included additional metrics available in the provided .csv files, such as project industry, country, and project platform. I calculated the number of days between the last visit and subscription, as well as between registration and subscription dates, to see if any relationships emerged. The results were further analyzed in Python, but I did not find any significant insights worth including in the final report. Instead, I decided to use the additional metrics in the recommendations.</p>
+
+<p><b>For well-performing channels</b>, I recommended continuing the current strategy and focusing on the countries, platforms, and industries that contribute the most to revenue.</p>
+
+<p><b>For channels needing optimization</b>, I tailored recommendations based on specific needs:</p>
+<ul>
+  <li><strong>If customer acquisition costs (CAC) were too high:</strong> I suggested adopting strategies from channels with lower CAC.</li>
+  <li><strong>If expanding customer reach was necessary:</strong> I recommended targeting industries or platforms that have shown strong performance in other channels.</li>
+</ul>
+
+```sql
+With paid_customers AS (
+  SELECT
+      Distinct hv.VISITOR_ID,
+      PROJECT_INDUSTRY,
+      PROJECT_COUNTRY_ISO,
+      cc.country_name,
+      PROJECT_PLATFORM,
+      FIRST_CONTRACT_VALUE,
+      COUNT(CASE WHEN CAST(EVENT_DATETIME AS DATE)  <= CAST(SUBSCRIPTION_CREATED_DATE AS DATE) THEN EVENT_DATETIME END) as count_sessions_before_subscr
+  FROM `portfolio.project.homepage_visits` as hv
+  JOIN `portfolio.project.projects_created` as pc
+  ON hv.VISITOR_ID=pc.VISITOR_ID
+  LEFT JOIN `bigquery-public-data.country_codes.country_codes` as cc
+  ON pc.PROJECT_COUNTRY_ISO=cc.alpha_2_code
+  WHERE SUBSCRIPTION_CREATED_DATE IS NOT NULL
+  GROUP BY hv.VISITOR_ID,PROJECT_INDUSTRY,PROJECT_COUNTRY_ISO,cc.country_name, PROJECT_PLATFORM,FIRST_CONTRACT_VALUE
+),
+
+
+filtered_visits AS (
+    SELECT
+        Distinct hv.VISITOR_ID,
+        ACQUISITION_CHANNEL,
+        CAST(EVENT_DATETIME AS DATE) as EVENT_DATETIME,
+        PROJECT_REGISTRATION_DATETIME,
+        CAST(SUBSCRIPTION_CREATED_DATE AS DATE) as SUBSCRIPTION_CREATED_DATE,
+        DATE_DIFF(CAST(SUBSCRIPTION_CREATED_DATE AS DATE), CAST(PROJECT_REGISTRATION_DATETIME AS DATE), DAY) AS days_between_reg_and_subscr
+    FROM `portfolio.project.homepage_visits` as hv
+    JOIN `portfolio.project.projects_created` as pc
+    ON hv.VISITOR_ID=pc.VISITOR_ID
+    WHERE CAST(EVENT_DATETIME AS DATE)  <= CAST(SUBSCRIPTION_CREATED_DATE AS DATE)
+    GROUP BY VISITOR_ID, ACQUISITION_CHANNEL,EVENT_DATETIME, PROJECT_REGISTRATION_DATETIME,SUBSCRIPTION_CREATED_DATE
+),
+
+
+last_channel AS (
+    SELECT
+        fv.VISITOR_ID,
+        ACQUISITION_CHANNEL,
+        EVENT_DATETIME,
+        ROW_NUMBER() OVER (PARTITION BY fv.VISITOR_ID ORDER BY EVENT_DATETIME DESC) AS row_num,
+        fv.days_between_reg_and_subscr
+    FROM filtered_visits as fv
+    JOIN paid_customers as pc
+    ON fv.VISITOR_ID=pc.VISITOR_ID
+
+
+),
+
+
+filtered_last_channel AS (
+    SELECT
+        VISITOR_ID,
+        ACQUISITION_CHANNEL,
+        EVENT_DATETIME,
+        days_between_reg_and_subscr
+    FROM
+        last_channel
+    WHERE
+        row_num = 1
+),
+
+
+channel_costs AS (
+    SELECT
+        DISTINCT hv.ACQUISITION_CHANNEL,
+        COST AS total_cost
+    FROM `portfolio.project.homepage_visits` as hv
+    JOIN `portfolio.project.costs` as co
+    ON hv.ACQUISITION_CHANNEL=co.ACQUISITION_CHANNEL
+    GROUP BY ACQUISITION_CHANNEL,COST
+),
+
+
+channel_revenue AS (
+    SELECT
+        pc.VISITOR_ID,
+        ACQUISITION_CHANNEL,
+        pc.PROJECT_INDUSTRY,
+        pc.PROJECT_COUNTRY_ISO,
+        pc.country_name,
+        pc.PROJECT_PLATFORM,
+        flc.days_between_reg_and_subscr,
+        pc.count_sessions_before_subscr,
+        ROUND(SUM(pc.FIRST_CONTRACT_VALUE * 8),2) AS total_revenue
+    FROM paid_customers as pc
+    JOIN filtered_last_channel as flc
+    ON pc.VISITOR_ID=flc.VISITOR_ID
+    GROUP BY pc.VISITOR_ID,ACQUISITION_CHANNEL, pc.PROJECT_INDUSTRY, pc.PROJECT_COUNTRY_ISO, pc.country_name, pc.PROJECT_PLATFORM, flc.days_between_reg_and_subscr, pc.count_sessions_before_subscr
+)
+SELECT
+  cr.VISITOR_ID,
+  cr.ACQUISITION_CHANNEL,
+  cr.PROJECT_INDUSTRY,
+  cr.PROJECT_COUNTRY_ISO,
+  cr.country_name,
+  cr.PROJECT_PLATFORM,
+  cr.days_between_reg_and_subscr,
+  cr.count_sessions_before_subscr,
+  cr.total_revenue
+  FROM channel_revenue cr
+  JOIN channel_costs cc
+  ON cr.ACQUISITION_CHANNEL = cc.ACQUISITION_CHANNEL
+  ORDER BY cr.total_revenue DESC;
+
+```
+
+---
